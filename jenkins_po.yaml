@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: jenkins-leenhan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+        - name: jenkins-pv-containers
+          image: jenkins/jenkins:lts
+          ports:
+            - containerPort: 8080
+              name: "jenkins"    
+          volumeMounts:
+            - mountPath: "/var/lib/jenkins"
+              name: jenkins-pv-lib
+            - mountPath: "/var/jenkins_home"
+              name: jenkins-pv-home
+      volumes:
+        - name: jenkins-pv-home
+          persistentVolumeClaim:
+            claimName: jenkins-pv1-home
+        - name: jenkins-pv-lib
+          persistentVolumeClaim:
+            claimName: jenkins-pv2-lib
